@@ -16,7 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\shared\**\*.cs" />
+    <Compile Include="DebugListener.cs" />
+    <Compile Include="RtpPacket.cs" />
+    <Compile Include="OpusEncoderWrapper.cs" />
+    <Compile Include="AudioStreamer.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="OpusTest.cs" />
+    <Compile Include="WasapiCaptureTest.cs" />
   </ItemGroup>
 
 </Project>

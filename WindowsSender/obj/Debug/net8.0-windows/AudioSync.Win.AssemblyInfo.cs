@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AudioSync.Win")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0b994837fc2d4d678473c997eaeb8f3b9628a72")]
 [assembly: System.Reflection.AssemblyProductAttribute("AudioSync.Win")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AudioSync.Win")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
