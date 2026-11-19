@@ -1,0 +1,37 @@
+# .NET build outputs
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+packages/
+*.nupkg
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Android
+.gradle/
+build/
+local.properties
+*.apk
+*.ap_
+*.aab
+*.apks
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test captures
+WindowsSender/test_capture.wav
+
+# OS
+.DS_Store

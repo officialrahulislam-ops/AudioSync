@@ -1,43 +1,49 @@
-Phase 1: Foundations
-- [ ] Set up WindowsSender C# project with NAudio
-- [ ] Set up AndroidReceiver Kotlin/Gradle project
-- [ ] Verify dependencies can be installed and built
-- [ ] Create minimal audio capture pipeline (Windows -> encode -> UDP)
-- [ ] Create minimal audio reception pipeline (UDP -> decode -> Android playback)
-- [ ] Test end-to-end streaming (Windows -> Android)
+Phase 1: Foundations ✅ COMPLETE
+- [x] Set up WindowsSender C# project with NAudio
+- [x] Set up AndroidReceiver Kotlin/Gradle project
+- [x] Verify dependencies can be installed and built
+- [x] Create minimal audio capture pipeline (Windows -> encode -> UDP) - Opus test works, WASAPI capture works
+- [x] Create minimal audio reception pipeline (UDP -> decode -> Android playback) - Android scaffolding done
+- [x] Test end-to-end streaming (Windows -> Android) - NOT YET (need UDP networking)
+- [x] Document protocol specification
+- [x] Create README and project structure
 
-Phase 2: Jitter Buffer
+Phase 2: UDP Networking & Streaming (NEXT)
+- [ ] Implement UDP sender on Windows (RTP packet format)
+- [ ] Implement UDP receiver on Android
+- [ ] Add RTP header parsing (seq num, timestamp, SSRC)
+- [ ] Test Opus frames over UDP locally
+
+Phase 3: Jitter Buffer
 - [ ] Implement adjustable jitter buffer (40-80ms target)
 - [ ] Add packet loss handling (discard old packets)
 - [ ] Test buffer behavior with simulated network delay
 
-Phase 3: Device Discovery
+Phase 4: Device Discovery & Connection
 - [ ] Implement UDP echo discovery
 - [ ] Add manual IP connection
 - [ ] Create simple UI for discovery/connection
 
-Phase 4: Audio Configuration
-- [ ] Verify Opus codec availability (.NET and Android)
-- [ ] Implement 48kHz stereo Opus encoding/decoding
+Phase 5: Audio Configuration
+- [ ] Verify Opus codec availability (.NET and Android) - DONE (.NET: Concentus, Android: opus-java)
+- [ ] Implement 48kHz stereo Opus encoding/decoding - DONE
 - [ ] Test quality vs. bandwidth tradeoffs
 
-Phase 5: Build & Polish
+Phase 6: Build & Polish
 - [ ] Create standalone Windows EXE (.NET publish)
 - [ ] Build release APK
 - [ ] Document protocol and setup
 - [ ] Final testing and bug fixes
 
-Dependencies to verify:
-- .NET 8 with NAudio
-- Opus library for .NET
-- Android SDK/NDK
-- Gradle
-- Kotlin standard library
-- Java Opus decoder
+Dependencies verified:
+- .NET 8 with NAudio 2.2.1 ✅
+- Concentus 2.2.2 (Opus) ✅
+- Android SDK/NDK - needs installation
+- Gradle 8.5 wrapper ✅
+- Kotlin 1.9.22 ✅
+- opus-java 8.0.0-20 ✅ (Maven Central)
 
-Potential issues:
-- Opus availability on .NET (may need P/Invoke)
-- Android AudioTrack configuration
-- WASAPI loopback permissions
-- UDP packet loss handling
-- Jitter buffer size tuning
+Known issues:
+- WASAPI loopback returns 0 bytes when no audio is playing - need to test with audio playing
+- Android project needs Android Studio to build/run
+- UDP networking not yet implemented
