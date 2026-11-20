@@ -27,7 +27,6 @@ jobs:
           packages: |
             platforms;android-34
             build-tools;34.0.0
-            ndk;25.2.9520075
 
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x AndroidReceiver/gradlew
