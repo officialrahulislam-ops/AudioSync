@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -22,8 +22,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          ndk-version: 25.2.9520075
+          accept-android-sdk-licenses: true
+          packages: |
+            platforms;android-34
+            build-tools;34.0.0
+            ndk;25.2.9520075
 
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x AndroidReceiver/gradlew
@@ -46,20 +49,14 @@ jobs:
         working-directory: AndroidReceiver
         run: ls -la app/build/outputs/apk/release/
 
-      - name: Find and upload APK artifact
-        run: |
-          APK_PATH=$(find AndroidReceiver/app/build/outputs/apk -name '*.apk' -type f | head -1)
-          if [ -z "$APK_PATH" ]; then
-            echo "No APK found, looking for debug APK"
-            APK_PATH=$(find AndroidReceiver/app/build/outputs/apk -name '*.apk' -type f | head -1)
-          fi
-          echo "Found APK: $APK_PATH"
-          ls -la "$APK_PATH"
+      - name: Find APK path
         id: find_apk
+        working-directory: AndroidReceiver
+        run: echo "path=$(find app/build/outputs/apk -name '*.apk' -type f | head -1)" >> $GITHUB_OUTPUT
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: audiosync-receiver-apk
-          path: ${{ steps.find_apk.outputs.path }}
+          path: AndroidReceiver/${{ steps.find_apk.outputs.path }}
           if-no-files-found: error
