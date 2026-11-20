@@ -1,0 +1,44 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        working-directory: WindowsSender
+        run: dotnet restore
+
+      - name: Build Windows EXE
+        working-directory: WindowsSender
+        run: dotnet build -c Release -r win-x64 --self-contained false
+
+      - name: Publish standalone EXE
+        working-directory: WindowsSender
+        run: dotnet publish -c Release -r win-x64 --self-contained false -o ./publish
+
+      - name: Verify EXE exists
+        shell: pwsh
+        working-directory: WindowsSender
+        run: |
+          Get-ChildItem -Path ./publish -Recurse -File | Where-Object { $_.Extension -eq ".exe" } | ForEach-Object { Write-Host "Found: $($_.FullName)" }
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audiosync-sender-exe
+          path: WindowsSender/publish/AudioSync.Win.exe
+          if-no-files-found: error
