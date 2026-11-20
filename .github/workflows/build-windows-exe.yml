@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
 
@@ -35,7 +35,7 @@ jobs:
         run: ls -la bin/Release/net8.0-windows/win-x64/AudioSync.Win.exe
 
       - name: Upload EXE artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: audiosync-sender-exe
           path: WindowsSender/bin/Release/net8.0-windows/win-x64/AudioSync.Win.exe
