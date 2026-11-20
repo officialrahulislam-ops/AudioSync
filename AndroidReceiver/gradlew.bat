@@ -1,27 +1,22 @@
 @echo off
-REM Gradle wrapper batch script for Windows
-
 cd /d "%~dp0"
 
-REM Check if gradle wrapper exists
-if not exist "gradle\wrapper\gradle.exe" (
-    echo Gradle wrapper not found. Download Gradle from https://gradle.org/install/
+set APP_HOME=%CD%
+set APP_BASE_NAME=%~n0
+
+if not exist "gradle\wrapper\gradle-wrapper.jar" (
+    echo Error: gradle-wrapper.jar not found. Run gradlew wrapper --gradle-version 8.5
     exit /b 1
 )
 
-REM Run Gradle
-"gradle\wrapper\gradle" %*
-exit /b %errorlevel%
-REM Gradle wrapper batch script for Windows
+set DEFAULT_JVM_OPTS=-Xmx512m -Xms256m
+set JAVA_OPTS=
+set GRADLE_OPTS=
 
-cd /d "%~dp0"
+set CLASSPATH=gradle\wrapper\gradle-wrapper.jar
 
-REM Check if gradle wrapper exists
-if not exist "gradle\wrapper\gradle.exe" (
-    echo Gradle wrapper not found. Download Gradle from https://gradle.org/install/
-    exit /b 1
-)
+REM Use JDK 11 for Android Gradle Plugin compatibility
+set JAVA_HOME=C:\Program Files\Microsoft\jdk-11.0.33.101-hotspot
 
-REM Run Gradle
-"gradle\wrapper\gradle" %*
+java %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
 exit /b %errorlevel%
