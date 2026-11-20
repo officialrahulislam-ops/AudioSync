@@ -39,6 +39,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerView:1.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
-    implementation 'org.restcomm.media.core.codec.opus:opus-java:8.0.0-20'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
 }

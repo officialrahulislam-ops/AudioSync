@@ -13,8 +13,10 @@
     <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
-# Keep Opus decoder classes
--keep class org.restcomm.media.core.codec.opus.** { *; }
+# Keep Opus decoder classes (Android MediaCodec)
+-keep class android.media.MediaCodec { *; }
+-keep class android.media.MediaFormat { *; }
+-keep class android.media.BufferInfo { *; }
 
 # Keep Kotlin classes
 -keep class kotlin.** { *; }

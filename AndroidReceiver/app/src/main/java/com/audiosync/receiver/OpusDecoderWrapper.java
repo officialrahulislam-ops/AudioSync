@@ -1,12 +1,19 @@
 package com.audiosync.receiver;
 
+import android.media.MediaCodec;
+import android.media.MediaFormat;
 import android.util.Log;
-import org.restcomm.media.core.codec.opus.OpusDecoder;
+import java.nio.ByteBuffer;
 
+/**
+ * Opus decoder wrapper using Android's built-in MediaCodec.
+ * Replaces the RestComm opus-java dependency which had unresolved
+ * transitive dependencies on Android.
+ */
 public class OpusDecoderWrapper {
     private static final String TAG = "OpusDecoderWrapper";
 
-    private OpusDecoder decoder;
+    private MediaCodec decoder;
     private final int sampleRate;
     private final int channels;
     private final int frameSize;
@@ -18,8 +25,10 @@ public class OpusDecoderWrapper {
         this.frameSize = sampleRate * frameSizeMs / 1000; // samples per frame per channel
 
         try {
-            decoder = new OpusDecoder();
-            decoder.init(sampleRate, channels);
+            decoder = MediaCodec.createDecoderByType("audio/opus");
+            MediaFormat format = MediaFormat.createAudioFormat("audio/opus", sampleRate, channels);
+            decoder.configure(format, null, null, 0);
+            decoder.start();
             initialized = true;
             Log.d(TAG, "Opus decoder initialized: " + sampleRate + "Hz " + channels + "ch");
         } catch (Exception e) {
@@ -39,19 +48,33 @@ public class OpusDecoderWrapper {
         }
 
         try {
-            // opus-java decode signature: decode(byte[] data, int offset, int len, short[] output, int outputOffset, boolean decodeFec)
-            // Returns number of decoded samples per channel
-            short[] output = new short[frameSize * channels];
-            int decodedSamples = decoder.decode(opusData, 0, opusData.length, output, 0, false);
-
-            if (decodedSamples <= 0) {
-                return null;
+            // Queue input buffer
+            int inputIndex = decoder.dequeueInputBuffer(5000);
+            if (inputIndex >= 0) {
+                ByteBuffer inputBuffer = decoder.getInputBuffer(inputIndex);
+                inputBuffer.clear();
+                inputBuffer.put(opusData);
+                decoder.queueInputBuffer(inputIndex, 0, opusData.length, 0, 0);
             }
 
-            // Return only the actual decoded samples
-            short[] result = new short[decodedSamples * channels];
-            System.arraycopy(output, 0, result, 0, decodedSamples * channels);
-            return result;
+            // Dequeue output buffer
+            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+            int outputIndex = decoder.dequeueOutputBuffer(info, 5000);
+            if (outputIndex >= 0 && info.size > 0) {
+                ByteBuffer outputBuffer = decoder.getOutputBuffer(outputInfo);
+                byte[] pcmBytes = new byte[info.size];
+                outputBuffer.get(pcmBytes);
+                decoder.releaseOutputBuffer(outputIndex, false);
+
+                // Convert bytes to short array (16-bit PCM, little-endian)
+                short[] result = new short[pcmBytes.length / 2];
+                for (int i = 0; i < result.length; i++) {
+                    result[i] = (short)((pcmBytes[i * 2] & 0xFF) | ((pcmBytes[i * 2 + 1] & 0xFF) << 8));
+                }
+                return result;
+            }
+
+            return null;
         } catch (Exception e) {
             Log.e(TAG, "Opus decode error: " + e.getMessage(), e);
             return null;
@@ -61,7 +84,7 @@ public class OpusDecoderWrapper {
     public void reset() {
         if (decoder != null && initialized) {
             try {
-                decoder.init(sampleRate, channels);
+                decoder.flush();
             } catch (Exception e) {
                 Log.e(TAG, "Opus decoder reset error", e);
             }
@@ -69,7 +92,15 @@ public class OpusDecoderWrapper {
     }
 
     public void release() {
-        decoder = null;
+        if (decoder != null) {
+            try {
+                decoder.stop();
+                decoder.release();
+            } catch (Exception e) {
+                Log.e(TAG, "Opus decoder release error", e);
+            }
+            decoder = null;
+        }
         initialized = false;
     }
 
