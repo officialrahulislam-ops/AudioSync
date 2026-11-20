@@ -28,17 +28,15 @@ jobs:
 
       - name: Publish standalone EXE
         working-directory: WindowsSender
-        run: dotnet publish -c Release -r win-x64 --self-contained false -o ./publish
+        run: dotnet publish -c Release -r win-x64 --self-contained true
 
       - name: Verify EXE exists
-        shell: pwsh
         working-directory: WindowsSender
-        run: |
-          Get-ChildItem -Path ./publish -Recurse -File | Where-Object { $_.Extension -eq ".exe" } | ForEach-Object { Write-Host "Found: $($_.FullName)" }
+        run: ls -la bin/Release/net8.0-windows/win-x64/AudioSync.Win.exe
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
           name: audiosync-sender-exe
-          path: WindowsSender/publish/AudioSync.Win.exe
+          path: WindowsSender/bin/Release/net8.0-windows/win-x64/AudioSync.Win.exe
           if-no-files-found: error

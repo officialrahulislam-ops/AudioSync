@@ -46,9 +46,20 @@ jobs:
         working-directory: AndroidReceiver
         run: ls -la app/build/outputs/apk/release/
 
+      - name: Find and upload APK artifact
+        run: |
+          APK_PATH=$(find AndroidReceiver/app/build/outputs/apk -name '*.apk' -type f | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "No APK found, looking for debug APK"
+            APK_PATH=$(find AndroidReceiver/app/build/outputs/apk -name '*.apk' -type f | head -1)
+          fi
+          echo "Found APK: $APK_PATH"
+          ls -la "$APK_PATH"
+        id: find_apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: audiosync-receiver-apk
-          path: AndroidReceiver/app/build/outputs/apk/release/app-release.apk
+          path: ${{ steps.find_apk.outputs.path }}
           if-no-files-found: error
