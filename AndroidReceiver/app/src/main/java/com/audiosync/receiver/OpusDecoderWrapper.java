@@ -61,7 +61,7 @@ public class OpusDecoderWrapper {
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             int outputIndex = decoder.dequeueOutputBuffer(info, 5000);
             if (outputIndex >= 0 && info.size > 0) {
-                ByteBuffer outputBuffer = decoder.getOutputBuffer(outputInfo);
+                ByteBuffer outputBuffer = decoder.getOutputBuffer(outputIndex);
                 byte[] pcmBytes = new byte[info.size];
                 outputBuffer.get(pcmBytes);
                 decoder.releaseOutputBuffer(outputIndex, false);
